@@ -14,13 +14,16 @@ import Animated, {
   withTiming,
 } from "react-native-reanimated";
 
+// ── Paneles (agregar los nuevos aquí a medida que se implementen) ─────────────
+import ChatsPanel from "../_panels/chats";
+import ConfiguracionPanel from "../_panels/configuracion";
+import ResidenciasPanel from "../_panels/residencias";
+
 const { height: SCREEN_HEIGHT } = Dimensions.get("window");
 const NAV_HEIGHT = 68;
-
-// El panel ocupa toda la pantalla cuando está abierto (arriba del navbar)
-const PANEL_OPEN = 0; // totalmente abierto (top = 0)
-const PANEL_CLOSED = SCREEN_HEIGHT; // fuera de pantalla
-const SNAP_THRESHOLD = SCREEN_HEIGHT * 0.4; // si arrastra más del 40% → cierra
+const PANEL_OPEN = 0;
+const PANEL_CLOSED = SCREEN_HEIGHT;
+const SNAP_THRESHOLD = SCREEN_HEIGHT * 0.4;
 
 // ── SVG Icons ────────────────────────────────────────────────────────────────
 const SearchIcon = () => (
@@ -82,6 +85,21 @@ const TAB_ICONS: Record<string, React.ComponentType> = {
   list: ListIcon,
 };
 
+// ── Router de paneles — agregar nuevos paneles aquí ──────────────────────────
+function PanelContent({ tab, onClose }: { tab: string; onClose: () => void }) {
+  switch (tab) {
+    case "settings":
+      return <ConfiguracionPanel />;
+    case "list":
+      return <ChatsPanel onClose={onClose} />;
+    case "home":
+      return <ResidenciasPanel />;
+    // case "home":     return <HomePanel />;
+    default:
+      return null;
+  }
+}
+
 // ── Componente principal ─────────────────────────────────────────────────────
 export default function MapaScreen() {
   const [activeTab, setActiveTab] = useState<string | null>(null);
@@ -129,7 +147,7 @@ export default function MapaScreen() {
     }
   }, []);
 
-  // ── Helpers de snap ──
+  // ── Snap helpers ──
   const snapOpen = () => {
     translateY.value = withSpring(PANEL_OPEN, {
       damping: 22,
@@ -142,7 +160,9 @@ export default function MapaScreen() {
     runOnJS(setActiveTab)(null);
   };
 
-  // ── Abrir / cerrar desde navbar ──
+  const handleClose = () => snapClose();
+
+  // ── Navbar ──
   const openPanel = (tab: string) => {
     if (activeTab === tab) {
       snapClose();
@@ -159,7 +179,6 @@ export default function MapaScreen() {
     })
     .onChange((e) => {
       const next = startY.value + e.translationY;
-      // No dejar subir más allá de PANEL_OPEN ni bajar más allá de PANEL_CLOSED
       translateY.value = Math.min(PANEL_CLOSED, Math.max(PANEL_OPEN, next));
     })
     .onEnd((e) => {
@@ -177,7 +196,7 @@ export default function MapaScreen() {
 
   return (
     <GestureHandlerRootView style={styles.container}>
-      {/* Mapa de fondo */}
+      {/* Mapa */}
       <View style={styles.mapContainer}>
         {MapComponents ? (
           <MapComponents />
@@ -186,18 +205,17 @@ export default function MapaScreen() {
         )}
       </View>
 
-      {/* Panel deslizante — cubre toda la pantalla al abrirse */}
+      {/* Panel deslizante */}
       <GestureDetector gesture={panGesture}>
         <Animated.View style={[styles.panel, animatedStyle]}>
-          {/* Handle */}
           <View style={styles.handleZone}>
             <View style={styles.handle} />
           </View>
-          {/* Contenido vacío — se implementará después */}
+          {activeTab && <PanelContent tab={activeTab} onClose={handleClose} />}
         </Animated.View>
       </GestureDetector>
 
-      {/* Navbar — siempre encima */}
+      {/* Navbar */}
       <View style={styles.navbar}>
         {tabs.map((key) => {
           const Icon = TAB_ICONS[key];
@@ -226,23 +244,17 @@ export default function MapaScreen() {
   );
 }
 
-// ── Estilos ──────────────────────────────────────────────────────────────────
 const styles = StyleSheet.create({
   container: { flex: 1 },
   mapContainer: { ...StyleSheet.absoluteFillObject },
   mapPlaceholder: { flex: 1, backgroundColor: "#dde8f0" },
-
   panel: {
     position: "absolute",
-    // El panel empieza desde el top=0 para cubrir toda la pantalla
     top: 0,
     left: 0,
     right: 0,
-    // Altura total menos la navbar (para que el navbar quede siempre visible)
     height: SCREEN_HEIGHT - NAV_HEIGHT + 100,
     backgroundColor: "#fff",
-    borderTopLeftRadius: 0, // sin bordes al estar en full screen
-    borderTopRightRadius: 0,
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.12,
@@ -261,7 +273,6 @@ const styles = StyleSheet.create({
     borderRadius: 2,
     backgroundColor: "#ddd",
   },
-
   navbar: {
     position: "absolute",
     bottom: 0,
@@ -276,7 +287,7 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: -2 },
     shadowOpacity: 0.07,
     shadowRadius: 8,
-    elevation: 24, // por encima del panel
+    elevation: 24,
     alignItems: "center",
   },
   navItem: {
