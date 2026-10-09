@@ -73,7 +73,7 @@ export default function CuentaPanel({ onBack }: { onBack: () => void }) {
         <Text style={s.label}>Rol</Text>
         <TextInput
           style={[s.input, s.inputOff]}
-          value={profile?.rol === "admin" ? "Administrador" : profile?.rol === "arrendatario" ? "Arrendatario" : "Estudiante"}
+          value={profile?.rol === "admin" ? "Administrador" : profile?.rol === "propietario" ? "Propietario" : "Estudiante"}
           editable={false}
         />
         <Text style={s.label}>Fecha de nacimiento</Text>

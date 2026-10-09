@@ -74,7 +74,7 @@ begin
       new.raw_user_meta_data ->> 'name',
       split_part(new.email, '@', 1)
     ),
-    case when new.raw_user_meta_data ->> 'rol' = 'arrendatario' then 'arrendatario' else 'estudiante' end,
+    case when new.raw_user_meta_data ->> 'rol' = 'propietario' then 'propietario' else 'estudiante' end,
     nullif(new.raw_user_meta_data ->> 'fecha_nacimiento', '')::date
   );
   return new;

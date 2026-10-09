@@ -23,7 +23,7 @@ export const TERMINOS: Documento = {
     {
       titulo: "2. Qué es HouseCrab",
       parrafos: [
-        "HouseCrab es una plataforma que permite a los arrendatarios publicar pensiones y residencias universitarias en un mapa, y a los estudiantes buscarlas, consultarlas y comunicarse con sus propietarios.",
+        "HouseCrab es una plataforma que permite a los propietarios publicar pensiones y residencias universitarias en un mapa, y a los estudiantes buscarlas, consultarlas y comunicarse con ellos.",
         "HouseCrab es únicamente un medio de contacto entre usuarios. No es propietaria, administradora ni intermediaria de los inmuebles, y no es parte de los acuerdos de arrendamiento, alojamiento o alimentación que los usuarios celebren entre sí.",
       ],
     },
@@ -31,7 +31,7 @@ export const TERMINOS: Documento = {
       titulo: "3. Tipos de usuario",
       parrafos: [
         "• Estudiante: busca pensiones, las consulta, chatea con propietarios y puede calificarlas.",
-        "• Arrendatario: publica y administra sus pensiones, y responde a los estudiantes.",
+        "• Propietario: publica y administra sus pensiones, y responde a los estudiantes.",
         "• Administrador: personal autorizado de HouseCrab que revisa las pensiones y modera contenido.",
       ],
     },
@@ -55,9 +55,9 @@ export const TERMINOS: Documento = {
       ],
     },
     {
-      titulo: "6. Obligaciones del arrendatario",
+      titulo: "6. Obligaciones del propietario",
       parrafos: [
-        "• Publicar solo pensiones sobre las que tengas derecho a ofrecer alojamiento (propietario, administrador o autorizado).",
+        "• Publicar solo pensiones sobre las que tengas derecho a ofrecer alojamiento (dueño, administrador o autorizado).",
         "• Mantener veraces y actualizados los precios, la ubicación, las fotos, los servicios y la disponibilidad. Las fotos deben ser del lugar real y de tu autoría o contar con autorización.",
         "• Cumplir la normativa aplicable, incluida la relativa al arrendamiento de vivienda urbana (Ley 820 de 2003), el uso del suelo y la convivencia.",
         "• No discriminar a los estudiantes por motivos prohibidos por la ley.",
@@ -161,8 +161,8 @@ export const DATOS: Documento = {
     {
       titulo: "2. Datos que recolectamos",
       parrafos: [
-        "• Datos de cuenta: nombre, correo electrónico, fecha de nacimiento, rol (estudiante, arrendatario o administrador) y contraseña (que se almacena cifrada). Si ingresas con Google, recibimos tu nombre y correo desde ese servicio.",
-        "• Datos de pensiones (arrendatarios): nombre del lugar, dirección, ubicación geográfica, teléfono, fotografías, descripción, servicios, alimentación y habitaciones con sus precios.",
+        "• Datos de cuenta: nombre, correo electrónico, fecha de nacimiento, rol (estudiante, propietario o administrador) y contraseña (que se almacena cifrada). Si ingresas con Google, recibimos tu nombre y correo desde ese servicio.",
+        "• Datos de pensiones (propietarios): nombre del lugar, dirección, ubicación geográfica, teléfono, fotografías, descripción, servicios, alimentación y habitaciones con sus precios.",
         "• Contenido y actividad: mensajes de chat, calificaciones y mensajes enviados a soporte.",
         "• Datos técnicos: información de sesión y preferencias (por ejemplo, modo claro u oscuro) guardadas en tu dispositivo.",
         "No solicitamos datos sensibles ni documentos de identidad. Te pedimos no compartirlos en el chat.",
@@ -173,8 +173,8 @@ export const DATOS: Documento = {
       parrafos: [
         "• Crear y administrar tu cuenta y autenticarte.",
         "• Permitir la publicación, búsqueda y visualización de pensiones en el mapa.",
-        "• Verificar que las pensiones son reales: un administrador revisa el registro y puede contactar al arrendatario por teléfono o correo antes de publicarla.",
-        "• Facilitar la comunicación entre estudiantes y arrendatarios mediante el chat.",
+        "• Verificar que las pensiones son reales: un administrador revisa el registro y puede contactar al propietario por teléfono o correo antes de publicarla.",
+        "• Facilitar la comunicación entre estudiantes y propietarios mediante el chat.",
         "• Gestionar calificaciones, solicitudes de soporte y reportes de uso indebido.",
         "• Mantener la seguridad de la Plataforma, prevenir fraudes y cumplir obligaciones legales.",
         "• Mejorar el servicio mediante análisis de uso agregado.",
@@ -190,7 +190,7 @@ export const DATOS: Documento = {
       titulo: "5. Qué datos ven otros usuarios",
       parrafos: [
         "• Todos los usuarios con sesión pueden ver tu nombre de perfil.",
-        "• De una pensión publicada se muestran públicamente: nombre, ubicación, dirección, fotos, descripción, precios, servicios y el teléfono de contacto que el arrendatario registre.",
+        "• De una pensión publicada se muestran públicamente: nombre, ubicación, dirección, fotos, descripción, precios, servicios y el teléfono de contacto que el propietario registre.",
         "• Los mensajes del chat solo los ven los participantes de la conversación.",
         "• Los administradores acceden a los datos de pensiones y de contacto de sus propietarios únicamente para la revisión y la moderación.",
       ],

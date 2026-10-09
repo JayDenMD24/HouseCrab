@@ -5,7 +5,7 @@
 -- El rol NO se puede asignar desde la app (el cliente no tiene permiso de actualizar `rol`).
 alter table public.profiles drop constraint if exists profiles_rol_check;
 alter table public.profiles
-  add constraint profiles_rol_check check (rol in ('estudiante', 'arrendatario', 'admin'));
+  add constraint profiles_rol_check check (rol in ('estudiante', 'propietario', 'admin'));
 
 create function public.es_admin()
 returns boolean

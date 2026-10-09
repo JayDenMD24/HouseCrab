@@ -22,7 +22,7 @@ const ITEMS: { label: string; detalle: string; icono: Icono; color: string; vist
 ];
 
 const NOMBRES_MODO: Record<Modo, string> = { claro: "Claro", oscuro: "Oscuro", sistema: "Automático" };
-const NOMBRE_ROL = { admin: "Administrador", arrendatario: "Arrendatario", estudiante: "Estudiante" } as const;
+const NOMBRE_ROL = { admin: "Administrador", propietario: "Propietario", estudiante: "Estudiante" } as const;
 
 function PersonalizarPanel({ onBack }: { onBack: () => void }) {
   const s = useEstilosConfig();

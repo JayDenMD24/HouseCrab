@@ -5,7 +5,7 @@ import { Platform } from "react-native";
 import { supabase } from "./supabase";
 
 // Roles que se pueden elegir al registrarse. El rol "admin" solo se asigna manualmente en la base de datos.
-export type Rol = "estudiante" | "arrendatario";
+export type Rol = "estudiante" | "propietario";
 export type RolPerfil = Rol | "admin";
 
 // Rol elegido en el registro con Google: se guarda antes de salir a Google y se aplica al volver.
@@ -13,7 +13,7 @@ const ROL_PENDIENTE = "housecrab_rol_pendiente";
 const leerRolPendiente = (): Rol | null => {
   try {
     const r = localStorage.getItem(ROL_PENDIENTE);
-    return r === "estudiante" || r === "arrendatario" ? r : null;
+    return r === "estudiante" || r === "propietario" ? r : null;
   } catch {
     return null;
   }
@@ -55,8 +55,14 @@ type AuthContextValue = {
 
 const AuthContext = createContext<AuthContextValue | null>(null);
 
+// El rol "propietario" se llamaba "arrendatario". Mientras la base de datos no esté migrada, el valor
+// antiguo se interpreta como el nuevo para que la app funcione igual antes y después de la migración.
+function normalizarPerfil(p: Profile | null): Profile | null {
+  return p && (p.rol as string) === "arrendatario" ? { ...p, rol: "propietario" } : p;
+}
+
 // ── Modo demo (solo desarrollo) ──────────────────────────────────────────────
-// Abrir la app con ?demo=estudiante|arrendatario|admin simula una sesión con ese rol para revisar el
+// Abrir la app con ?demo=estudiante|propietario|admin simula una sesión con ese rol para revisar el
 // diseño sin credenciales. Los datos públicos siguen siendo los reales; las acciones que requieren un
 // usuario de verdad fallan. Está protegido por __DEV__: no existe en builds de producción.
 // Para salir: ?demo=off
@@ -69,17 +75,18 @@ function leerDemo(): RolPerfil | null {
     if (q === "off") sessionStorage.removeItem("hc_demo");
     else if (q) sessionStorage.setItem("hc_demo", q);
     const r = sessionStorage.getItem("hc_demo");
-    return r === "estudiante" || r === "arrendatario" || r === "admin" ? r : null;
+    if (r === "arrendatario") return "propietario"; // nombre antiguo del rol
+    return r === "estudiante" || r === "propietario" || r === "admin" ? r : null;
   } catch {
     return null;
   }
 }
 
 function ProveedorDemo({ rol, children }: { rol: RolPerfil; children: React.ReactNode }) {
-  // El arrendatario demo adopta el id de un propietario real para ver sus pensiones publicadas.
+  // El propietario demo adopta el id de un propietario real para ver sus pensiones publicadas.
   const [id, setId] = useState(DEMO_ID);
   useEffect(() => {
-    if (rol !== "arrendatario") return;
+    if (rol !== "propietario") return;
     supabase
       .from("pensiones")
       .select("propietario_id")
@@ -155,7 +162,7 @@ function ProveedorReal({ children }: { children: React.ReactNode }) {
           await supabase.auth.signOut();
           return;
         }
-        let perfil = data as Profile | null;
+        let perfil = normalizarPerfil(data as Profile | null);
 
         const pendiente = leerRolPendiente();
         if (pendiente) {
@@ -204,7 +211,7 @@ function ProveedorReal({ children }: { children: React.ReactNode }) {
   const refreshProfile = async () => {
     if (!userId) return;
     const { data } = await supabase.from("profiles").select("*").eq("id", userId).maybeSingle();
-    if (data) setProfile(data as Profile);
+    if (data) setProfile(normalizarPerfil(data as Profile));
   };
 
   return (

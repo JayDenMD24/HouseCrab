@@ -1,4 +1,4 @@
--- HouseCrab: chat estudiante <-> arrendatario. Ejecutar en Supabase > SQL Editor (después de schema.sql).
+-- HouseCrab: chat estudiante <-> propietario. Ejecutar en Supabase > SQL Editor (después de schema.sql).
 
 -- Una conversación por (pensión, estudiante).
 create table public.conversaciones (

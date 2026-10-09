@@ -54,7 +54,7 @@ const TAB_CHATS: Tab = { key: "list", icono: "chatbubbles-outline", activo: "cha
 const TAB_AJUSTES: Tab = { key: "settings", icono: "settings-outline", activo: "settings", etiqueta: "Ajustes" };
 
 function tabsPorRol(rol: RolPerfil | undefined): Tab[] {
-  if (rol === "arrendatario") {
+  if (rol === "propietario") {
     return [
       TAB_BUSCAR,
       { key: "home", icono: "business-outline", activo: "business", etiqueta: "Mis pensiones" },
@@ -73,7 +73,7 @@ function tabsPorRol(rol: RolPerfil | undefined): Tab[] {
 }
 
 // ── Router de paneles ────────────────────────────────────────────────────────
-// La pestaña "home": gestión de pensiones (arrendatario) o revisión (admin).
+// La pestaña "home": gestión de pensiones (propietario) o revisión (admin).
 function HomePanel({ onChange }: { onChange: () => void }) {
   const { profile } = useAuth();
   return profile?.rol === "admin" ? <AdminPanel onChange={onChange} /> : <ResidenciasPanel onChange={onChange} />;

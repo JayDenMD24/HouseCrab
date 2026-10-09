@@ -11,7 +11,7 @@ import { radios, useColores } from "@/lib/tema";
 
 const ROLES: { rol: Rol; titulo: string; detalle: string; icono: keyof typeof Ionicons.glyphMap }[] = [
   { rol: "estudiante", titulo: "Estudiante", detalle: "Busco una pensión", icono: "school-outline" },
-  { rol: "arrendatario", titulo: "Arrendatario", detalle: "Ofrezco una pensión", icono: "business-outline" },
+  { rol: "propietario", titulo: "Propietario", detalle: "Ofrezco una pensión", icono: "business-outline" },
 ];
 
 export default function RegistroScreen() {

@@ -34,11 +34,11 @@ export default function ResidenciasPanel({ onChange }: { onChange?: () => void }
   const [vista, setVista] = useState<Vista>("mis");
   const [editando, setEditando] = useState<Pension | null>(null);
 
-  if (profile?.rol !== "arrendatario") {
+  if (profile?.rol !== "propietario") {
     return (
       <EstadoVacio
         icono="business-outline"
-        titulo="Sección para arrendatarios"
+        titulo="Sección para propietarios"
         texto="Usa el mapa y el buscador para encontrar pensiones."
       />
     );

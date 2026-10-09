@@ -7,7 +7,7 @@ language plpgsql
 security definer set search_path = ''
 as $$
 begin
-  if nuevo not in ('estudiante', 'arrendatario') then
+  if nuevo not in ('estudiante', 'propietario') then
     raise exception 'Rol no válido';
   end if;
 

@@ -8,10 +8,10 @@ import { Encabezado, useEstilosConfig } from "./comun";
 const PREGUNTAS = [
   {
     p: "¿Cómo publico una pensión?",
-    r: "Con una cuenta de arrendatario, entra a Residencias → Registrar Residencia, marca la ubicación en el mapa, completa los datos y agrega las habitaciones. Después, en Mis Residencias, pulsa «Enviar a revisión»: un administrador verificará la pensión y se comunicará contigo por teléfono. Cuando la apruebe, quedará publicada en el mapa.",
+    r: "Con una cuenta de propietario, entra a Residencias → Registrar Residencia, marca la ubicación en el mapa, completa los datos y agrega las habitaciones. Después, en Mis Residencias, pulsa «Enviar a revisión»: un administrador verificará la pensión y se comunicará contigo por teléfono. Cuando la apruebe, quedará publicada en el mapa.",
   },
   {
-    p: "¿Cómo contacto a un arrendatario?",
+    p: "¿Cómo contacto a un propietario?",
     r: "Toca el pin de la pensión en el mapa y luego «Chatear con el propietario». También puedes llamar al teléfono que aparece en la información.",
   },
   {

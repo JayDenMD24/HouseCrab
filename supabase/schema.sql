@@ -4,7 +4,7 @@
 create table public.profiles (
   id uuid primary key references auth.users (id) on delete cascade,
   nombre text not null,
-  rol text not null default 'estudiante' check (rol in ('estudiante', 'arrendatario')),
+  rol text not null default 'estudiante' check (rol in ('estudiante', 'propietario')),
   fecha_nacimiento date,
   created_at timestamptz not null default now()
 );
@@ -21,7 +21,7 @@ begin
   values (
     new.id,
     coalesce(new.raw_user_meta_data ->> 'nombre', split_part(new.email, '@', 1)),
-    case when new.raw_user_meta_data ->> 'rol' = 'arrendatario' then 'arrendatario' else 'estudiante' end,
+    case when new.raw_user_meta_data ->> 'rol' = 'propietario' then 'propietario' else 'estudiante' end,
     nullif(new.raw_user_meta_data ->> 'fecha_nacimiento', '')::date
   );
   return new;
@@ -85,7 +85,7 @@ create policy "pensiones_select" on public.pensiones
 create policy "pensiones_insert" on public.pensiones
   for insert to authenticated with check (
     propietario_id = auth.uid()
-    and exists (select 1 from public.profiles p where p.id = auth.uid() and p.rol = 'arrendatario')
+    and exists (select 1 from public.profiles p where p.id = auth.uid() and p.rol = 'propietario')
   );
 create policy "pensiones_update" on public.pensiones
   for update to authenticated using (propietario_id = auth.uid()) with check (propietario_id = auth.uid());
