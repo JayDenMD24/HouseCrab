@@ -41,3 +41,11 @@ app-example
 # generated native folders
 /ios
 /android
+
+# build web y despliegue
+/dist
+.wrangler/
+*.apk
+
+# configuración local de herramientas
+.claude/

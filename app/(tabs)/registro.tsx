@@ -1,131 +1,147 @@
+import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
-import {
-  ScrollView,
-  StyleSheet,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  View,
-} from "react-native";
+import { useMemo, useState } from "react";
+import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
+
+import { Campo, MensajeError, PantallaAuth, Separador } from "@/components/auth-ui";
+import { Boton } from "@/components/ui";
+import { Rol, useAuth } from "@/lib/auth";
+import { fechaISO } from "@/lib/fechas";
+import { radios, useColores } from "@/lib/tema";
+
+const ROLES: { rol: Rol; titulo: string; detalle: string; icono: keyof typeof Ionicons.glyphMap }[] = [
+  { rol: "estudiante", titulo: "Estudiante", detalle: "Busco una pensión", icono: "school-outline" },
+  { rol: "arrendatario", titulo: "Arrendatario", detalle: "Ofrezco una pensión", icono: "business-outline" },
+];
 
 export default function RegistroScreen() {
   const router = useRouter();
+  const styles = useStyles();
+  const col = useColores();
+  const { signUp, signInWithGoogle } = useAuth();
+  const [nombre, setNombre] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [confirmar, setConfirmar] = useState("");
+  const [fecha, setFecha] = useState("");
+  const [rol, setRol] = useState<Rol>("estudiante");
+  const [error, setError] = useState<string | null>(null);
+  const [enviando, setEnviando] = useState(false);
+
+  const registrar = async () => {
+    const iso = fechaISO(fecha);
+    if (!nombre.trim() || !email.trim() || !password) return setError("Completa todos los campos.");
+    if (password !== confirmar) return setError("Las contraseñas no coinciden.");
+    if (!iso) return setError("La fecha debe tener el formato dd/mm/aaaa.");
+    setEnviando(true);
+    setError(null);
+    const err = await signUp({
+      email: email.trim(),
+      password,
+      nombre: nombre.trim(),
+      rol,
+      fechaNacimiento: iso,
+    });
+    setEnviando(false);
+    if (err) setError(err);
+    // Si todo sale bien, AuthGate redirige al mapa.
+  };
 
   return (
-    <View style={styles.container}>
-      <ScrollView
-        contentContainerStyle={styles.inner}
-        showsVerticalScrollIndicator={false}
-      >
-        <TouchableOpacity onPress={() => router.back()} style={styles.back}>
-          <Text style={styles.backText}>←</Text>
-        </TouchableOpacity>
+    <PantallaAuth
+      titulo="Crear cuenta"
+      subtitulo="Únete a HouseCrab en un minuto."
+      onBack={() => (router.canGoBack() ? router.back() : router.replace("/"))}
+    >
+      <View style={styles.roles}>
+        {ROLES.map((r) => {
+          const activo = rol === r.rol;
+          return (
+            <TouchableOpacity
+              key={r.rol}
+              style={[styles.rol, activo && styles.rolActivo]}
+              onPress={() => setRol(r.rol)}
+              activeOpacity={0.85}
+              accessibilityRole="radio"
+              accessibilityState={{ selected: activo }}
+            >
+              <Ionicons name={r.icono} size={26} color={activo ? col.primario : col.textoTer} />
+              <Text style={[styles.rolTitulo, activo && { color: col.primario }]}>{r.titulo}</Text>
+              <Text style={styles.rolDetalle}>{r.detalle}</Text>
+            </TouchableOpacity>
+          );
+        })}
+      </View>
 
-        <Text style={styles.title}>Registrarse</Text>
+      <Campo icono="person-outline" etiqueta="Nombre" value={nombre} onChangeText={setNombre} placeholder="Tu nombre" />
+      <Campo
+        icono="mail-outline"
+        etiqueta="Correo electrónico"
+        value={email}
+        onChangeText={setEmail}
+        keyboardType="email-address"
+        autoCapitalize="none"
+        placeholder="tucorreo@ejemplo.com"
+      />
+      <Campo
+        icono="lock-closed-outline"
+        etiqueta="Contraseña"
+        value={password}
+        onChangeText={setPassword}
+        password
+        placeholder="Mínimo 6 caracteres"
+      />
+      <Campo
+        icono="lock-closed-outline"
+        etiqueta="Confirmar contraseña"
+        value={confirmar}
+        onChangeText={setConfirmar}
+        password
+        placeholder="Repite tu contraseña"
+      />
+      <Campo
+        icono="calendar-outline"
+        etiqueta="Fecha de nacimiento"
+        value={fecha}
+        onChangeText={setFecha}
+        placeholder="dd/mm/aaaa"
+      />
 
-        <Text style={styles.label}>Correo electrónico</Text>
-        <TextInput
-          style={styles.input}
-          keyboardType="email-address"
-          autoCapitalize="none"
-        />
+      {error && <MensajeError texto={error} />}
 
-        <Text style={styles.label}>Contraseña</Text>
-        <TextInput style={styles.input} secureTextEntry />
-
-        <Text style={styles.label}>Confirmar contraseña</Text>
-        <TextInput style={styles.input} secureTextEntry />
-
-        <Text style={styles.label}>Fecha de nacimiento</Text>
-        <TextInput style={styles.input} placeholder="dd/mm/aaaa" />
-
-        <TouchableOpacity style={styles.buttonPrimary}>
-          <Text style={styles.buttonPrimaryText}>Registrarse</Text>
-        </TouchableOpacity>
-
-        <Text style={styles.subtitle}>también puedes</Text>
-        <TouchableOpacity style={styles.buttonGoogle}>
-          <Text style={styles.googleIcon}>G</Text>
-          <Text style={styles.buttonGoogleText}>Continuar con Google</Text>
-        </TouchableOpacity>
-      </ScrollView>
-    </View>
+      <Boton titulo="Crear cuenta" onPress={registrar} cargando={enviando} />
+      <Separador texto={`o regístrate como ${rol} con Google`} />
+      <Boton
+        titulo="Continuar con Google"
+        icono="logo-google"
+        variante="secundario"
+        onPress={async () => setError(await signInWithGoogle(rol))}
+      />
+    </PantallaAuth>
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#fff",
-  },
-  inner: {
-    paddingHorizontal: 40,
-    paddingTop: 60,
-    paddingBottom: 32,
-  },
-  back: {
-    marginBottom: 8,
-  },
-  backText: {
-    fontSize: 22,
-    color: "#333",
-  },
-  title: {
-    fontSize: 28,
-    fontWeight: "bold",
-    color: "#2196F3",
-    marginBottom: 24,
-  },
-  label: {
-    fontSize: 13,
-    color: "#555",
-    marginBottom: 4,
-  },
-  input: {
-    borderWidth: 1,
-    borderColor: "#ccc",
-    borderRadius: 8,
-    padding: 10,
-    marginBottom: 16,
-    fontSize: 15,
-  },
-  buttonPrimary: {
-    backgroundColor: "#2196F3",
-    paddingVertical: 14,
-    borderRadius: 32,
-    alignItems: "center",
-    marginTop: 8,
-    marginBottom: 20,
-  },
-  buttonPrimaryText: {
-    color: "#fff",
-    fontSize: 16,
-    fontWeight: "bold",
-  },
-  subtitle: {
-    fontSize: 13,
-    color: "#888",
-    textAlign: "center",
-    marginBottom: 8,
-  },
-  buttonGoogle: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "center",
-    paddingVertical: 14,
-    borderRadius: 32,
-    borderWidth: 1.5,
-    borderColor: "#ccc",
-    gap: 10,
-  },
-  googleIcon: {
-    fontSize: 18,
-    fontWeight: "bold",
-    color: "#4285F4",
-  },
-  buttonGoogleText: {
-    fontSize: 16,
-    fontWeight: "600",
-    color: "#333",
-  },
-});
+const useStyles = () => {
+  const col = useColores();
+  return useMemo(
+    () =>
+      StyleSheet.create({
+        roles: { flexDirection: "row", gap: 12 },
+        rol: {
+          flex: 1,
+          alignItems: "center",
+          gap: 4,
+          paddingVertical: 14,
+          paddingHorizontal: 8,
+          borderRadius: radios.lg,
+          borderWidth: 2,
+          borderColor: col.borde,
+          backgroundColor: col.tarjeta,
+        },
+        rolActivo: { borderColor: col.primario, backgroundColor: col.azulSuave },
+        rolTitulo: { fontSize: 15, fontWeight: "800", color: col.texto },
+        rolDetalle: { fontSize: 12, color: col.textoTer, textAlign: "center" },
+      }),
+    [col],
+  );
+};

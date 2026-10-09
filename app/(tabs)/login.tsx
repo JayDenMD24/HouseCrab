@@ -1,112 +1,66 @@
 import { useRouter } from "expo-router";
-import {
-    StyleSheet,
-    Text,
-    TextInput,
-    TouchableOpacity,
-    View,
-} from "react-native";
+import { useState } from "react";
+
+import { Campo, MensajeError, PantallaAuth, Separador } from "@/components/auth-ui";
+import { Boton } from "@/components/ui";
+import { useAuth } from "@/lib/auth";
 
 export default function LoginScreen() {
   const router = useRouter();
+  const { signIn, signInWithGoogle } = useAuth();
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState<string | null>(null);
+  const [enviando, setEnviando] = useState(false);
+
+  const entrar = async () => {
+    if (!email.trim() || !password) {
+      setError("Completa el correo y la contraseña.");
+      return;
+    }
+    setEnviando(true);
+    setError(null);
+    const err = await signIn(email.trim(), password);
+    setEnviando(false);
+    if (err) setError(err);
+    // Si todo sale bien, AuthGate redirige al mapa.
+  };
 
   return (
-    <View style={styles.container}>
-      <TouchableOpacity onPress={() => router.back()} style={styles.back}>
-        <Text style={styles.backText}>←</Text>
-      </TouchableOpacity>
+    <PantallaAuth
+      titulo="Iniciar sesión"
+      subtitulo="Bienvenido de vuelta a HouseCrab."
+      onBack={() => (router.canGoBack() ? router.back() : router.replace("/"))}
+    >
+      <Campo
+        icono="mail-outline"
+        etiqueta="Correo electrónico"
+        value={email}
+        onChangeText={setEmail}
+        keyboardType="email-address"
+        autoCapitalize="none"
+        placeholder="tucorreo@ejemplo.com"
+      />
+      <Campo
+        icono="lock-closed-outline"
+        etiqueta="Contraseña"
+        value={password}
+        onChangeText={setPassword}
+        password
+        onSubmitEditing={entrar}
+        placeholder="Tu contraseña"
+      />
 
-      <Text style={styles.title}>Iniciar sesión</Text>
+      {error && <MensajeError texto={error} />}
 
-      <Text style={styles.label}>Nombre de usuario</Text>
-      <TextInput style={styles.input} placeholder="" />
-
-      <Text style={styles.label}>Contraseña</Text>
-      <TextInput style={styles.input} placeholder="" secureTextEntry />
-
-      <TouchableOpacity style={styles.buttonPrimary}>
-        <Text style={styles.buttonPrimaryText}>Iniciar sesión</Text>
-      </TouchableOpacity>
-
-      <Text style={styles.subtitle}>también puedes</Text>
-      <TouchableOpacity style={styles.buttonGoogle}>
-        <Text style={styles.googleIcon}>G</Text>
-        <Text style={styles.buttonGoogleText}>Continuar con Google</Text>
-      </TouchableOpacity>
-    </View>
+      <Boton titulo="Iniciar sesión" onPress={entrar} cargando={enviando} />
+      <Separador texto="o" />
+      <Boton
+        titulo="Continuar con Google"
+        icono="logo-google"
+        variante="secundario"
+        onPress={async () => setError(await signInWithGoogle())}
+      />
+    </PantallaAuth>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    backgroundColor: "#fff",
-    paddingHorizontal: 40,
-    paddingTop: 60,
-    paddingBottom: 32,
-  },
-  back: {
-    marginBottom: 8,
-  },
-  backText: {
-    fontSize: 22,
-    color: "#333",
-  },
-  title: {
-    fontSize: 28,
-    fontWeight: "bold",
-    color: "#2196F3",
-    marginBottom: 24,
-  },
-  label: {
-    fontSize: 13,
-    color: "#555",
-    marginBottom: 4,
-  },
-  input: {
-    borderWidth: 1,
-    borderColor: "#ccc",
-    borderRadius: 8,
-    padding: 10,
-    marginBottom: 16,
-    fontSize: 15,
-  },
-  buttonPrimary: {
-    backgroundColor: "#2196F3",
-    paddingVertical: 14,
-    borderRadius: 32,
-    alignItems: "center",
-    marginTop: 8,
-    marginBottom: 20,
-  },
-  buttonPrimaryText: {
-    color: "#fff",
-    fontSize: 16,
-    fontWeight: "bold",
-  },
-  subtitle: {
-    fontSize: 13,
-    color: "#888",
-    textAlign: "center",
-    marginBottom: 8,
-  },
-  buttonGoogle: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "center",
-    paddingVertical: 14,
-    borderRadius: 32,
-    borderWidth: 1.5,
-    borderColor: "#ccc",
-    gap: 10,
-  },
-  googleIcon: {
-    fontSize: 18,
-    fontWeight: "bold",
-    color: "#4285F4",
-  },
-  buttonGoogleText: {
-    fontSize: 16,
-    fontWeight: "600",
-    color: "#333",
-  },
-});

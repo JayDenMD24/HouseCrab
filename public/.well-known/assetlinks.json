@@ -1,0 +1,10 @@
+[
+  {
+    "relation": ["delegate_permission/common.handle_all_urls"],
+    "target": {
+      "namespace": "android_app",
+      "package_name": "com.housecrab.app",
+      "sha256_cert_fingerprints": ["C5:9D:19:D0:C3:A0:43:A8:27:DE:66:BD:D5:0A:A7:72:C9:4C:18:E8:68:21:BB:47:E5:5B:79:19:90:E4:B6:83"]
+    }
+  }
+]
